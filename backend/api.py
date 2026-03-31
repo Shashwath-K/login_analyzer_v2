@@ -11,8 +11,10 @@ Endpoints:
     GET  /api/training-status → check if model.pkl exists
     POST /api/simulate        → generate attack simulation data
 
-Run:
-    cd backend
+Run from project root:
+    uvicorn backend.api:app --reload --port 8000
+
+Run from backend directory:
     uvicorn api:app --reload --port 8000
 """
 
@@ -30,7 +32,8 @@ sys.path.insert(0, PROJECT_ROOT)
 try:
     from fastapi import FastAPI, UploadFile, File, HTTPException, BackgroundTasks
     from fastapi.middleware.cors import CORSMiddleware
-    from fastapi.responses import JSONResponse
+    from fastapi.responses import JSONResponse, FileResponse, HTMLResponse
+    from fastapi.staticfiles import StaticFiles
     from pydantic import BaseModel
 except ImportError:
     raise ImportError("FastAPI is required. Run: pip install fastapi uvicorn python-multipart")
@@ -273,3 +276,48 @@ def simulate_attack(attack_type: str, count: int = 20):
             })
 
     return _run_pipeline(rows)
+
+# ── Frontend Integration ───────────────────────────────────────────────────────
+
+# Path to the React production build
+DIST_PATH = os.path.join(PROJECT_ROOT, "webapp", "dist")
+
+# 1. Mount the assets folder (CSS, JS, Images) if it exists
+if os.path.exists(os.path.join(DIST_PATH, "assets")):
+    app.mount("/assets", StaticFiles(directory=os.path.join(DIST_PATH, "assets")), name="assets")
+
+# 2. Catch-all route to serve index.html for SPA (React Router) support
+@app.get("/{full_path:path}")
+async def serve_spa_or_static(full_path: str):
+    # Skip handling if the request is for an API endpoint (should be handled by @app.get above)
+    if full_path.startswith("api"):
+        raise HTTPException(status_code=404, detail="API endpoint not found")
+
+    # If the file exists in dist/ (e.g., favicon.ico, logo.png), serve it directly
+    file_path = os.path.join(DIST_PATH, full_path)
+    if os.path.isfile(file_path):
+        return FileResponse(file_path)
+
+    # Otherwise, check for index.html (SPA routing)
+    index_path = os.path.join(DIST_PATH, "index.html")
+    if os.path.isfile(index_path):
+        return FileResponse(index_path)
+
+    # If build directory is missing entirely, show a friendly developer message
+    if not os.path.exists(DIST_PATH):
+        return HTMLResponse(content=f"""
+            <div style="font-family: sans-serif; text-align: center; padding: 50px;">
+                <h1 style="color: #ff2d6b;">📝 Frontend Build Missing</h1>
+                <p>The backend is running, but the React build was not found at:</p>
+                <code style="background: #eee; padding: 5px;">{DIST_PATH}</code>
+                <p>Please run the following command in your terminal to build the UI:</p>
+                <div style="background: #000; color: #00f0c8; padding: 15px; display: inline-block; border-radius: 8px;">
+                    <code>cd webapp ; npm install ; npm run build</code>
+                </div>
+                <p style="margin-top: 20px; color: #666;">Once built, refresh this page.</p>
+                <p><a href="/api/status" style="color: #00f0c8;">Check API Status</a> | <a href="/docs" style="color: #00f0c8;">API Docs</a></p>
+            </div>
+        """, status_code=404)
+
+    # Final fallback for missing index.html inside dist/
+    raise HTTPException(status_code=404, detail="Frontend entry point not found in build directory.")
