@@ -1,0 +1,11 @@
+# Core ML & Data Processing
+pandas
+scikit-learn
+matplotlib
+joblib
+numpy
+
+# Web Backend (FastAPI)
+fastapi
+uvicorn
+python-multipart
