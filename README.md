@@ -199,7 +199,8 @@ node --version
 ### 1. Install Python Dependencies
 
 ```bash
-pip install pandas scikit-learn matplotlib joblib fastapi uvicorn python-multipart
+# From the project root:
+pip install -r requirements.txt
 ```
 
 ### 2. Train the ML Model
