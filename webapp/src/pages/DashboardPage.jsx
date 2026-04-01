@@ -8,10 +8,9 @@ export default function DashboardPage({ data, loading }) {
       <div className="flex flex-col items-center justify-center" style={{ minHeight: '60vh', textAlign: 'center' }}>
         <div className="card" style={{ maxWidth: 460, padding: 40, background: 'var(--panel)' }}>
           <ShieldCheck size={64} color="var(--a1)" style={{ marginBottom: 24, opacity: 0.8 }} />
-          <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 12 }}>Welcome to LogCentric</h1>
           <p style={{ color: 'var(--mu)', fontSize: 14, lineHeight: 1.6, marginBottom: 32 }}>
-            A professional ML-powered authentication threat intelligence platform. 
-            Upload your system logs to identify brute force, credential stuffing, and dictionary attack patterns with explainable AI reasoning.
+            A professional pattern-driven authentication threat intelligence platform. 
+            Upload your system logs to identify brute force, credential stuffing, and dictionary attack patterns with explainable analysis logic.
           </p>
           <div className="flex justify-center gap-4">
             <div style={{ padding: '12px 20px', border: '1px solid var(--border)', borderRadius: 'var(--radius)', fontSize: 13, background: 'rgba(255,255,255,0.02)' }}>
