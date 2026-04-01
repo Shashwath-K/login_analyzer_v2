@@ -1,5 +1,6 @@
-import { ShieldAlert, AlertCircle, CheckCircle, FileText, Activity } from 'lucide-react'
+import { ShieldAlert, AlertCircle, CheckCircle, FileText, Activity, Download, FileJson } from 'lucide-react'
 import ReportsPanel from '../components/ReportsPanel.jsx'
+import { downloadCSV, downloadPDF } from '../utils/exportUtils'
 
 export default function ReportsPage({ data }) {
   if (!data) {
@@ -44,7 +45,25 @@ export default function ReportsPage({ data }) {
             {attackers.length} identified attacker IP(s) · {criticals.length} critical threats · {data.total_events} events analyzed
           </div>
         </div>
-        <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
+        <div style={{ marginLeft: 'auto', display: 'flex', gap: 12 }}>
+          <button 
+            className="btn btn-secondary" 
+            onClick={() => downloadCSV(data)}
+            style={{ padding: '8px 14px', fontSize: 12 }}
+          >
+            <FileJson size={14} />
+            <span>Export CSV</span>
+          </button>
+          <button 
+            className="btn btn-primary" 
+            onClick={() => downloadPDF(data)}
+            style={{ padding: '8px 14px', fontSize: 12 }}
+          >
+            <Download size={14} />
+            <span>Generate PDF Report</span>
+          </button>
+        </div>
+        <div style={{ marginLeft: 24, textAlign: 'right', borderLeft: '1px solid var(--border)', paddingLeft: 24 }}>
           <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--mu)', textTransform: 'uppercase' }}>Consolidated Risk Score</div>
           <div style={{ fontSize: 20, fontWeight: 800, color: riskColor }}>{riskLevel}</div>
         </div>
