@@ -48,7 +48,7 @@ export default function ReportsPanel({ data }) {
             </div>
           ))}
         </div>
-        <div className="output-box fade-up">
+        <div className="output-box fade-up" style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6, fontSize: 13, fontFamily: 'var(--font-mono)' }}>
           {tabs[activeTab].content || 'No content available for this report section.'}
         </div>
       </div>
