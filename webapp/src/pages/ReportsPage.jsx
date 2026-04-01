@@ -1,3 +1,4 @@
+import { ShieldAlert, AlertCircle, CheckCircle, FileText, Activity } from 'lucide-react'
 import ReportsPanel from '../components/ReportsPanel.jsx'
 
 export default function ReportsPage({ data }) {
@@ -6,9 +7,9 @@ export default function ReportsPage({ data }) {
       <div className="card">
         <div className="card-body">
           <div className="empty-state">
-            <div className="empty-icon">📋</div>
+            <div className="empty-icon"><FileText size={48} color="var(--border2)" /></div>
             <div className="empty-text">
-              Run an analysis on the <strong style={{ color: 'var(--a1)' }}>Analysis</strong> tab first to generate reports.
+              Run an analysis on the <strong style={{ color: 'var(--a1)' }}>Analysis</strong> tab first to generate security intelligence reports.
             </div>
           </div>
         </div>
@@ -19,71 +20,62 @@ export default function ReportsPage({ data }) {
   const attackers = (data.classified_ips || []).filter(r => r.attack_type !== 'Normal')
   const criticals = attackers.filter(r => r.severity === 'CRITICAL')
 
+  const riskLevel = criticals.length >= 3 ? 'CRITICAL' : attackers.length > 0 ? 'HIGH' : 'LOW'
+  const RiskIcon = criticals.length >= 3 ? ShieldAlert : attackers.length > 0 ? AlertCircle : CheckCircle
+  const riskColor = criticals.length >= 3 ? 'var(--crit)' : attackers.length > 0 ? 'var(--high)' : 'var(--a4)'
+
   return (
     <div className="fade-up">
       {/* Threat level banner */}
       <div style={{
-        marginBottom: 18, padding: '14px 20px',
-        background: criticals.length >= 3
-          ? 'rgba(255,45,107,.08)'  : attackers.length > 0
-          ? 'rgba(245,166,35,.07)' : 'rgba(0,240,200,.05)',
-        border: `1px solid ${criticals.length >= 3 ? 'rgba(255,45,107,.3)' : attackers.length > 0
-          ? 'rgba(245,166,35,.25)' : 'rgba(0,240,200,.15)'}`,
+        marginBottom: 24, padding: '16px 24px',
+        background: 'var(--panel)',
+        border: `1px solid ${riskColor}33`,
+        borderLeft: `4px solid ${riskColor}`,
         borderRadius: 'var(--radius)',
-        display: 'flex', alignItems: 'center', gap: 14,
+        display: 'flex', alignItems: 'center', gap: 16,
       }}>
-        <span style={{ fontSize: 24 }}>
-          {criticals.length >= 3 ? '🔴' : attackers.length > 0 ? '🟠' : '🟢'}
-        </span>
+        <RiskIcon size={32} color={riskColor} />
         <div>
-          <div style={{ fontWeight: 700, fontSize: 14,
-            color: criticals.length >= 3 ? 'var(--crit)' : attackers.length > 0 ? 'var(--a3)' : 'var(--a1)' }}>
-            {criticals.length >= 3 ? 'CRITICAL THREAT LEVEL' :
-             attackers.length > 0 ? 'ELEVATED THREAT LEVEL' : 'LOW THREAT LEVEL'}
+          <div style={{ fontWeight: 800, fontSize: 13, textTransform: 'uppercase', letterSpacing: '0.05em', color: riskColor }}>
+            {riskLevel} Risk System State
           </div>
-          <div style={{ fontSize: 12, color: 'var(--mu)', marginTop: 2 }}>
-            {attackers.length} attacker IP(s) detected · {criticals.length} critical · {data.total_events} total events
+          <div style={{ fontSize: 13, color: 'var(--mu)', marginTop: 2 }}>
+            {attackers.length} identified attacker IP(s) · {criticals.length} critical threats · {data.total_events} events analyzed
           </div>
         </div>
         <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
-          <div style={{ fontSize: 11, color: 'var(--mu)' }}>Overall Risk</div>
-          <div style={{
-            fontSize: 18, fontWeight: 800,
-            color: criticals.length >= 3 ? 'var(--crit)' : attackers.length > 0 ? 'var(--a3)' : 'var(--a1)',
-          }}>
-            {criticals.length >= 3 ? 'CRITICAL' : attackers.length > 0 ? 'HIGH' : 'LOW'}
-          </div>
+          <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--mu)', textTransform: 'uppercase' }}>Consolidated Risk Score</div>
+          <div style={{ fontSize: 20, fontWeight: 800, color: riskColor }}>{riskLevel}</div>
         </div>
       </div>
 
       {/* Attacker summary grid */}
       {attackers.length > 0 && (
-        <div className="card" style={{ marginBottom: 18 }}>
+        <div className="card">
           <div className="card-header">
-            <span>⚡</span>
-            <span className="card-title" style={{ color: 'var(--a2)' }}>Attacker Summary</span>
+            <Activity size={16} color="var(--a1)" />
+            <span className="card-title">Threat Actor Landscape</span>
           </div>
           <div className="card-body">
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 12 }}>
               {attackers.slice(0, 12).map(r => (
                 <div key={r.ip} style={{
-                  background: 'rgba(0,0,0,.3)',
-                  border: `1px solid ${r.severity === 'CRITICAL' ? 'rgba(255,45,107,.3)' : 'rgba(245,166,35,.25)'}`,
-                  borderRadius: 8, padding: '10px 14px', minWidth: 220,
+                  background: 'rgba(255,255,255,0.02)',
+                  border: `1px solid var(--border)`,
+                  borderRadius: 10, padding: '12px 16px',
                 }}>
-                  <div style={{ color: 'var(--a1)', fontFamily: 'var(--font-mono)', fontSize: 12, fontWeight: 600 }}>
+                  <div style={{ color: 'var(--a1)', fontFamily: 'var(--font-mono)', fontSize: 12, fontWeight: 700 }}>
                     {r.ip}
                   </div>
-                  <div style={{ display: 'flex', gap: 8, marginTop: 5, alignItems: 'center' }}>
-                    <span style={{
-                      fontSize: 11, fontWeight: 700, color:
-                        r.severity === 'CRITICAL' ? 'var(--crit)' : 'var(--high)' }}>
+                  <div style={{ display: 'flex', gap: 8, marginTop: 8, alignItems: 'center' }}>
+                    <span style={{ fontSize: 11, fontWeight: 700, color: r.severity === 'CRITICAL' ? 'var(--crit)' : 'var(--high)' }}>
                       {r.attack_type}
                     </span>
                     <span className={`badge badge-${r.severity}`}>{r.severity}</span>
                   </div>
-                  <div style={{ fontSize: 10, color: 'var(--mu)', marginTop: 4 }}>
-                    {r.failed_attempts} failures · {r.confidence}% confidence
+                  <div style={{ fontSize: 11, color: 'var(--mu)', marginTop: 4 }}>
+                    {r.failed_attempts} events · {r.confidence}% confidence
                   </div>
                 </div>
               ))}

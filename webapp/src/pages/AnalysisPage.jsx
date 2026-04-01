@@ -1,90 +1,57 @@
+import { ShieldAlert, Search, Upload } from 'lucide-react'
 import UploadPanel from '../components/UploadPanel.jsx'
 import ClassificationTable from '../components/ClassificationTable.jsx'
 
 export default function AnalysisPage({ data, loading, error, onFile, onSample, onSimulate }) {
   return (
-    <div>
-      <UploadPanel
-        onFile={onFile}
-        onSample={onSample}
-        onSimulate={onSimulate}
-        loading={loading}
-      />
-
-      {error && (
-        <div style={{
-          padding: '12px 18px', marginBottom: 16,
-          background: 'rgba(255,45,107,.08)',
-          border: '1px solid rgba(255,45,107,.3)',
-          borderRadius: 'var(--radius)', color: 'var(--crit)', fontSize: 13,
-        }}>
-          ⚠️ <strong>Error:</strong> {error}
+    <div className="fade-up">
+      <div className="flex items-center gap-4" style={{ marginBottom: 24 }}>
+        <h1 style={{ fontSize: 24, fontWeight: 800, letterSpacing: '-0.02em' }}>ML Analysis Pipeline</h1>
+        <div style={{ padding: '4px 10px', background: 'rgba(56,189,248,0.1)', color: 'var(--a1)', borderRadius: 9999, fontSize: 11, fontWeight: 700, textTransform: 'uppercase' }}>
+           Explainable AI Engine
         </div>
-      )}
+      </div>
 
-      {loading && (
-        <div style={{
-          display: 'flex', alignItems: 'center', gap: 14,
-          padding: '20px 24px', marginBottom: 14,
-          background: 'var(--card)', border: '1px solid var(--border)',
-          borderRadius: 'var(--radius)',
-        }}>
-          <span className="spinner" style={{ width: 22, height: 22 }} />
-          <div>
-            <div style={{ fontWeight: 600, fontSize: 13, color: 'var(--a1)' }}>Running ML pipeline…</div>
-            <div style={{ color: 'var(--mu)', fontSize: 11, marginTop: 3 }}>
-              Reading logs → Extracting features → Classifying attacks → Generating explanations
-            </div>
-          </div>
-        </div>
-      )}
-
-      {data && !loading && (
-        <>
-          {/* Quick summary bar */}
-          <div style={{
-            display: 'flex', gap: 14, flexWrap: 'wrap',
-            marginBottom: 16, padding: '12px 16px',
-            background: 'var(--card)', border: '1px solid var(--border)',
-            borderRadius: 'var(--radius)', alignItems: 'center',
-          }}>
-            <span style={{ fontSize: 12, color: 'var(--mu)' }}>Analysis complete.</span>
-            {[
-              { label: 'Events', val: data.total_events, color: 'var(--a1)' },
-              { label: 'Failures', val: data.failures, color: 'var(--crit)' },
-              { label: 'Attacker IPs', val: (data.classified_ips||[]).filter(r=>r.attack_type!=='Normal').length, color: 'var(--a3)' },
-              { label: 'Unique IPs', val: data.unique_ips, color: 'var(--a4)' },
-            ].map(s => (
-              <span key={s.label} style={{ fontSize: 12 }}>
-                <strong style={{ color: s.color, fontSize: 15 }}>{s.val}</strong>
-                {' '}<span style={{ color: 'var(--mu)' }}>{s.label}</span>
-              </span>
-            ))}
-            {!data.ml_available && (
-              <span style={{ marginLeft: 'auto', fontSize: 11, color: 'var(--a3)', padding: '3px 10px',
-                background: 'rgba(245,166,35,.1)', border: '1px solid rgba(245,166,35,.25)',
-                borderRadius: 12 }}>
-                ⚠️ Model not trained — statistical analysis only
-              </span>
-            )}
-          </div>
-
-          <ClassificationTable data={data} />
-        </>
-      )}
-
-      {!data && !loading && (
-        <div className="card">
-          <div className="card-body">
-            <div className="empty-state">
-              <div className="empty-icon">🎯</div>
-              <div className="empty-text">
-                Upload a CSV, run the sample, or simulate an attack above to see ML classification results.
+      <div className="grid-2" style={{ gridTemplateColumns: 'minmax(300px, 420px) 1fr', alignItems: 'start' }}>
+        <div className="flex flex-col gap-4">
+          <UploadPanel onFile={onFile} onSample={onSample} onSimulate={onSimulate} loading={loading} />
+          
+          {error && (
+            <div className="card" style={{ borderLeft: '4px solid var(--a2)', background: 'rgba(239, 68, 68, 0.05)' }}>
+              <div className="card-body flex items-center gap-4">
+                <ShieldAlert size={24} color="var(--a2)" />
+                <div>
+                   <div style={{ fontWeight: 700, color: 'var(--a2)' }}>Analysis Error</div>
+                   <div style={{ fontSize: 12, color: 'var(--mu)', marginTop: 2 }}>{error}</div>
+                </div>
               </div>
             </div>
+          )}
+        </div>
+
+        <div className="card">
+          <div className="card-header">
+            <Search size={16} color="var(--a1)" />
+            <span className="card-title">Security Threat Classification Engine</span>
+          </div>
+          <div className="card-body">
+            {loading ? (
+              <div className="flex flex-col items-center justify-center" style={{ padding: '100px 20px', color: 'var(--mu)' }}>
+                <div className="spinner" style={{ marginBottom: 20 }}></div>
+                <div style={{ fontWeight: 600 }}>ML Inference in Progress...</div>
+              </div>
+            ) : error ? (
+              <div className="flex flex-col items-center justify-center text-center" style={{ padding: '80px 20px' }}>
+                 <ShieldAlert size={48} color="var(--a2)" style={{ marginBottom: 16, opacity: 0.3 }} />
+                 <div style={{ fontWeight: 700, color: 'var(--a2)' }}>Analysis Failed</div>
+                 <div style={{ fontSize: 13, color: 'var(--mu)', marginTop: 8, maxWidth: 300 }}>{error}</div>
+              </div>
+            ) : (
+              <ClassificationTable data={data} />
+            )}
           </div>
         </div>
-      )}
+      </div>
     </div>
   )
 }

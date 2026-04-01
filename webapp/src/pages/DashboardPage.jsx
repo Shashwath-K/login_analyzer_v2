@@ -1,47 +1,24 @@
+import { ShieldCheck, ArrowRight, BarChart3, Activity } from 'lucide-react'
 import StatsRow from '../components/StatsRow.jsx'
-import {
-  AttackDistributionChart,
-  AttemptsPerIPChart,
-  SuccessVsFailureChart,
-  AttemptsOverTimeChart,
-} from '../components/Charts.jsx'
+import Charts from '../components/Charts.jsx'
 
 export default function DashboardPage({ data, loading }) {
-  if (loading) {
+  if (!data && !loading) {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 80, gap: 20 }}>
-        <span className="spinner" style={{ width: 40, height: 40, borderWidth: 3 }} />
-        <div style={{ color: 'var(--mu)', fontSize: 14 }}>Running ML analysis pipeline…</div>
-      </div>
-    )
-  }
-
-  if (!data) {
-    return (
-      <div style={{ paddingTop: 60, textAlign: 'center' }}>
-        <div className="card" style={{ maxWidth: 560, margin: '0 auto' }}>
-          <div className="card-body" style={{ padding: 40 }}>
-            <div style={{ fontSize: 48, marginBottom: 16 }}>🔐</div>
-            <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--a1)', marginBottom: 10 }}>
-              Login Attack Pattern Analyzer
+      <div className="flex flex-col items-center justify-center" style={{ minHeight: '60vh', textAlign: 'center' }}>
+        <div className="card" style={{ maxWidth: 460, padding: 40, background: 'var(--panel)' }}>
+          <ShieldCheck size={64} color="var(--a1)" style={{ marginBottom: 24, opacity: 0.8 }} />
+          <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 12 }}>Welcome to LogCentric</h1>
+          <p style={{ color: 'var(--mu)', fontSize: 14, lineHeight: 1.6, marginBottom: 32 }}>
+            A professional ML-powered authentication threat intelligence platform. 
+            Upload your system logs to identify brute force, credential stuffing, and dictionary attack patterns with explainable AI reasoning.
+          </p>
+          <div className="flex justify-center gap-4">
+            <div style={{ padding: '12px 20px', border: '1px solid var(--border)', borderRadius: 'var(--radius)', fontSize: 13, background: 'rgba(255,255,255,0.02)' }}>
+               ML-Based Attack Classification
             </div>
-            <div style={{ color: 'var(--mu)', fontSize: 13, lineHeight: 1.8, marginBottom: 20 }}>
-              ML-based authentication threat detection using<br />
-              <strong style={{ color: 'var(--tx)' }}>RandomForestClassifier</strong> trained on login behavior features.
-            </div>
-            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center', fontSize: 12 }}>
-              {['Brute Force Detection', 'Credential Stuffing', 'Dictionary Attacks',
-                'Password Spray', 'ML Explainability', 'SOC Reports'].map(f => (
-                <span key={f} className="pill">{f}</span>
-              ))}
-            </div>
-            <div style={{
-              marginTop: 24, padding: '12px 16px',
-              background: 'rgba(0,240,200,.05)',
-              border: '1px solid rgba(0,240,200,.15)',
-              borderRadius: 'var(--radius-sm)', fontSize: 12, color: 'var(--mu)',
-            }}>
-              👆 Use the <strong style={{ color: 'var(--a1)' }}>Analysis</strong> tab to load data and run the pipeline.
+            <div style={{ padding: '12px 20px', border: '1px solid var(--border)', borderRadius: 'var(--radius)', fontSize: 13, background: 'rgba(255,255,255,0.02)' }}>
+               Plain-English Reasonings
             </div>
           </div>
         </div>
@@ -51,32 +28,49 @@ export default function DashboardPage({ data, loading }) {
 
   return (
     <div className="fade-up">
-      <StatsRow data={data} />
-
-      <div className="grid-2">
-        <SuccessVsFailureChart data={data} />
-        <AttackDistributionChart data={data} />
-      </div>
-
-      <div style={{ marginTop: 14 }}>
-        <AttemptsOverTimeChart data={data} />
-      </div>
-
-      <div style={{ marginTop: 14 }}>
-        <AttemptsPerIPChart data={data} />
-      </div>
-
-      {!data.ml_available && (
-        <div style={{
-          marginTop: 16, padding: '14px 20px',
-          background: 'rgba(245,166,35,.06)',
-          border: '1px solid rgba(245,166,35,.25)',
-          borderRadius: 'var(--radius)', fontSize: 12, color: 'var(--a3)',
-        }}>
-          ⚠️ <strong>ML model not trained yet.</strong> Charts show only statistical data.
-          Click <strong>Train Model</strong> in the header to enable attack classification.
+      <div className="flex items-center justify-between" style={{ marginBottom: 24 }}>
+        <div>
+          <h1 style={{ fontSize: 24, fontWeight: 800, letterSpacing: '-0.02em' }}>Security Overview</h1>
+          <p style={{ color: 'var(--mu)', fontSize: 13, marginTop: 4 }}>Real-time authentication threat intelligence and risk assessment.</p>
         </div>
-      )}
+        <div className="flex items-center gap-2" style={{ color: 'var(--a4)', fontSize: 12, fontWeight: 600 }}>
+          <Activity size={14} />
+          <span>System Monitoring Active</span>
+        </div>
+      </div>
+
+      <StatsRow data={data} />
+      
+      <div className="grid-2">
+        <div className="card">
+          <div className="card-header">
+            <BarChart3 size={16} color="var(--a1)" />
+            <span className="card-title">Threat Distribution</span>
+          </div>
+          <div className="card-body chart-bg">
+            <Charts data={data} type="pie" />
+          </div>
+        </div>
+        <div className="card">
+          <div className="card-header">
+            <Activity size={16} color="var(--a2)" />
+            <span className="card-title">Authentication Success vs Failure</span>
+          </div>
+          <div className="card-body chart-bg">
+            <Charts data={data} type="bar" />
+          </div>
+        </div>
+      </div>
+
+      <div className="card">
+        <div className="card-header">
+           <Activity size={16} color="var(--a1)" />
+           <span className="card-title">Log Activity Intensity (Last 24h)</span>
+        </div>
+        <div className="card-body chart-bg" style={{ minHeight: 320 }}>
+          <Charts data={data} type="area" />
+        </div>
+      </div>
     </div>
   )
 }
