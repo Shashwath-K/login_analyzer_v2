@@ -8,7 +8,7 @@ export default function AnalysisPage({ data, loading, error, onFile, onSample, o
       <div className="flex items-center gap-4" style={{ marginBottom: 24 }}>
         <h1 style={{ fontSize: 24, fontWeight: 800, letterSpacing: '-0.02em' }}>ML Analysis Pipeline</h1>
         <div style={{ padding: '4px 10px', background: 'rgba(56,189,248,0.1)', color: 'var(--a1)', borderRadius: 9999, fontSize: 11, fontWeight: 700, textTransform: 'uppercase' }}>
-           Explainable AI Engine
+           Intelligent Analysis Engine
         </div>
       </div>
 
