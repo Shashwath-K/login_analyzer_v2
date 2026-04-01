@@ -56,7 +56,7 @@ MODEL_PATH    = os.path.join(PROJECT_ROOT, "ml_model", "model.pkl")
 
 # ── FastAPI app ────────────────────────────────────────────────────────────────
 app = FastAPI(
-    title="Login Attack Pattern Analyzer API",
+    title="LogCentric Attack Pattern Analyzer API",
     description="ML-based authentication threat detection REST API",
     version="1.0.0",
 )
