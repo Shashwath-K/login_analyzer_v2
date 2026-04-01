@@ -65,22 +65,22 @@ export default function ClassificationTable({ data }) {
               </tr>
               {expanded === idx && (
                 <tr>
-                  <td colSpan="7" style={{ padding: '0 20px 20px 60px', background: 'rgba(0,0,0,.15)' }}>
+                  <td colSpan="7" style={{ padding: '24px 24px 32px 64px', background: 'rgba(0,0,0,.15)' }}>
                     <div className="reasons-list fade-up">
-                      <div style={{ fontWeight: 700, marginBottom: 8, color: 'var(--a1)', fontSize: 11, textTransform: 'uppercase' }}>ML Analysis Reasoning</div>
-                      <div style={{ marginBottom: 12 }}>{r.summary}</div>
+                      <div style={{ fontWeight: 700, marginBottom: 12, color: 'var(--a1)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em' }}>ML Analysis Reasoning</div>
+                      <div style={{ marginBottom: 24, fontSize: 14, lineHeight: 1.5, color: 'var(--tx)' }}>{r.summary}</div>
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
-                        <div>
-                          <div style={{ color: 'var(--mu)', fontWeight: 700, fontSize: 10, textTransform: 'uppercase', marginBottom: 4 }}>Identified Patterns</div>
+                        <div style={{ background: 'rgba(255,255,255,0.02)', padding: 20, borderRadius: 'var(--radius)', border: '1px solid var(--border)' }}>
+                          <div style={{ color: 'var(--mu)', fontWeight: 700, fontSize: 10, textTransform: 'uppercase', marginBottom: 16, letterSpacing: '0.05em' }}>Identified Patterns</div>
                           {r.reasons.map((reason, i) => (
-                            <div key={i} className="reason-item">{reason}</div>
+                            <div key={i} className="reason-item" style={{ marginBottom: 10, fontSize: 12 }}>• {reason}</div>
                           ))}
                         </div>
-                        <div>
-                          <div style={{ color: 'var(--mu)', fontWeight: 700, fontSize: 10, textTransform: 'uppercase', marginBottom: 4 }}>Mitigation Roadmap</div>
+                        <div style={{ background: 'rgba(255,255,255,0.02)', padding: 20, borderRadius: 'var(--radius)', border: '1px solid var(--border)' }}>
+                          <div style={{ color: 'var(--mu)', fontWeight: 700, fontSize: 10, textTransform: 'uppercase', marginBottom: 16, letterSpacing: '0.05em' }}>Mitigation Roadmap</div>
                           {r.recommendation_steps.map((step, i) => (
-                            <div key={i} style={{ display: 'flex', gap: 8, fontSize: 11, marginBottom: 4 }}>
-                              <span style={{ color: 'var(--a4)' }}>✓</span>
+                            <div key={i} style={{ display: 'flex', gap: 10, fontSize: 12, marginBottom: 10 }}>
+                              <span style={{ color: 'var(--a4)', fontWeight: 'bold' }}>✓</span>
                               <span>{step}</span>
                             </div>
                           ))}
