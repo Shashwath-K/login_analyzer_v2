@@ -1,161 +1,129 @@
+import React from 'react'
 import {
   PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend,
   BarChart, Bar, XAxis, YAxis, CartesianGrid,
-  LineChart, Line, Area, AreaChart,
+  AreaChart, Area
 } from 'recharts'
 
-const COLORS = {
-  'Brute Force':         '#ff2d6b',
-  'Credential Stuffing': '#f5a623',
-  'Dictionary Attack':   '#c084fc',
-  'Password Spray':      '#3d8eff',
-  'Normal':              '#00f0c8',
-  'Unknown':             '#556688',
-}
-const PIE_COLORS = Object.values(COLORS)
-
-const DARK = {
-  background: 'transparent',
-  text: '#b8cce4',
-  grid: '#131e35',
-  tooltip: { bg: '#080d18', border: '#1a2845' },
+/* ── LogCentric Chart Styling ───────────────────────────────────────────────── */
+const THEME = {
+  a1: '#38bdf8',   /* Light Blue */
+  a2: '#ef4444',   /* Red */
+  a3: '#f59e0b',   /* Orange */
+  a4: '#22c55e',   /* Green */
+  a5: '#8b5cf6',   /* Purple */
+  bg: '#020617',
+  text: '#94a3b8',
+  grid: '#1e293b',
 }
 
-const TT = ({ active, payload, label }) => {
+const COLORS = [THEME.a1, THEME.a2, THEME.a3, THEME.a5, THEME.a4]
+
+const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null
   return (
     <div style={{
-      background: DARK.tooltip.bg, border: `1px solid ${DARK.tooltip.border}`,
-      borderRadius: 8, padding: '10px 14px', fontSize: 12, color: DARK.text,
+      background: '#1e293b', border: '1px solid #334155',
+      borderRadius: 8, padding: '10px 14px', fontSize: 12, color: '#f1f5f9',
+      boxShadow: '0 4px 12px rgba(0,0,0,0.5)'
     }}>
-      {label && <div style={{ fontWeight: 700, marginBottom: 6, color: '#00f0c8' }}>{label}</div>}
+      {label && <div style={{ fontWeight: 700, marginBottom: 6, color: THEME.a1, textTransform: 'uppercase', fontSize: 10 }}>{label}</div>}
       {payload.map((p, i) => (
-        <div key={i} style={{ color: p.color || p.fill, marginBottom: 2 }}>
-          {p.name}: <strong>{typeof p.value === 'number' && p.value % 1 !== 0 ? p.value.toFixed(3) : p.value}</strong>
+        <div key={i} style={{ color: p.color || p.fill, marginBottom: 2, display: 'flex', gap: 8, justifyContent: 'space-between' }}>
+          <span>{p.name}:</span> 
+          <strong style={{ color: '#fff' }}>{typeof p.value === 'number' && p.value % 1 !== 0 ? p.value.toFixed(2) : p.value.toLocaleString()}</strong>
         </div>
       ))}
     </div>
   )
 }
 
-/* ── 1. Attack type pie ─────────────────────────────────────────────────────── */
-export function AttackDistributionChart({ data }) {
+/* ── Specific Chart Implementations ─────────────────────────────────────────── */
+
+function AttackDistributionPie({ data }) {
   const items = (data?.attack_distribution || []).filter(d => d.count > 0)
-  if (!items.length) return null
+  if (!items.length) return <div style={{ height: 260, display: 'flex', alignItems: 'center', justifyContent: 'center', color: THEME.text, fontSize: 12 }}>No attack data available</div>
+
   return (
-    <div className="chart-bg fade-up">
-      <div className="chart-title">Attack Type Distribution</div>
-      <ResponsiveContainer width="100%" height={260}>
-        <PieChart>
-          <Pie
-            data={items} dataKey="count" nameKey="type"
-            cx="50%" cy="50%" outerRadius={95} innerRadius={52}
-            labelLine={false}
-            label={({ type, percent }) =>
-              percent > 0.04 ? `${(percent * 100).toFixed(0)}%` : ''
-            }
-          >
-            {items.map((d, i) => (
-              <Cell key={d.type}
-                fill={COLORS[d.type] || PIE_COLORS[i % PIE_COLORS.length]}
-                stroke="transparent" />
-            ))}
-          </Pie>
-          <Tooltip content={<TT />} />
-          <Legend
-            iconType="circle" iconSize={8}
-            formatter={(v) => <span style={{ color: DARK.text, fontSize: 11 }}>{v}</span>}
-          />
-        </PieChart>
-      </ResponsiveContainer>
-    </div>
+    <ResponsiveContainer width="100%" height={260}>
+      <PieChart>
+        <Pie
+          data={items} dataKey="count" nameKey="type"
+          cx="50%" cy="50%" outerRadius={85} innerRadius={55}
+          paddingAngle={4} stroke="none"
+        >
+          {items.map((d, i) => (
+            <Cell key={d.type} fill={COLORS[i % COLORS.length]} />
+          ))}
+        </Pie>
+        <Tooltip content={<CustomTooltip />} />
+        <Legend 
+          iconType="circle" iconSize={8} align="center"
+          formatter={(v) => <span style={{ color: THEME.text, fontSize: 11, marginLeft: 4 }}>{v}</span>}
+        />
+      </PieChart>
+    </ResponsiveContainer>
   )
 }
 
-/* ── 2. Top IPs bar ─────────────────────────────────────────────────────────── */
-export function AttemptsPerIPChart({ data }) {
-  const items = (data?.top_ips || []).slice(0, 10).map(d => ({
-    ...d, colorClass: d.count >= 10 ? '#ff2d6b' : d.count >= 5 ? '#f5a623' : '#3d8eff',
-  }))
-  if (!items.length) return null
-  return (
-    <div className="chart-bg fade-up">
-      <div className="chart-title">Failed Attempts per Source IP</div>
-      <ResponsiveContainer width="100%" height={260}>
-        <BarChart data={items} layout="vertical" margin={{ left: 12, right: 16 }}>
-          <CartesianGrid horizontal={false} strokeDasharray="3 3" stroke={DARK.grid} />
-          <XAxis type="number" tick={{ fill: DARK.text, fontSize: 10 }} axisLine={false} tickLine={false} />
-          <YAxis type="category" dataKey="ip" tick={{ fill: '#00f0c8', fontSize: 10, fontFamily: 'JetBrains Mono' }}
-            width={110} axisLine={false} tickLine={false} />
-          <Tooltip content={<TT />} cursor={{ fill: 'rgba(0,240,200,.04)' }} />
-          <Bar dataKey="count" name="Failed Logins" radius={[0, 3, 3, 0]}>
-            {items.map((d, i) => <Cell key={i} fill={d.colorClass} />)}
-          </Bar>
-        </BarChart>
-      </ResponsiveContainer>
-    </div>
-  )
-}
-
-/* ── 3. Success vs Failure bar ──────────────────────────────────────────────── */
-export function SuccessVsFailureChart({ data }) {
-  if (!data) return null
+function OutcomeBar({ data }) {
   const items = [
-    { name: 'Successful Logins', value: data.successes, color: '#00f0c8' },
-    { name: 'Failed Logins',     value: data.failures,  color: '#ff2d6b' },
+    { name: 'Successful', value: data?.successes || 0, fill: THEME.a4 },
+    { name: 'Failed', value: data?.failures || 0, fill: THEME.a2 }
   ]
   return (
-    <div className="chart-bg fade-up">
-      <div className="chart-title">Login Outcome Summary</div>
-      <ResponsiveContainer width="100%" height={200}>
-        <BarChart data={items} margin={{ left: -10, right: 10 }}>
-          <CartesianGrid vertical={false} strokeDasharray="3 3" stroke={DARK.grid} />
-          <XAxis dataKey="name" tick={{ fill: DARK.text, fontSize: 11 }} axisLine={false} tickLine={false} />
-          <YAxis tick={{ fill: DARK.text, fontSize: 10 }} axisLine={false} tickLine={false} />
-          <Tooltip content={<TT />} cursor={{ fill: 'rgba(0,240,200,.03)' }} />
-          <Bar dataKey="value" name="Count" radius={[4, 4, 0, 0]}>
-            {items.map((d, i) => <Cell key={i} fill={d.color} />)}
-          </Bar>
-        </BarChart>
-      </ResponsiveContainer>
-    </div>
+    <ResponsiveContainer width="100%" height={260}>
+      <BarChart data={items} margin={{ top: 10, right: 10, bottom: 20 }}>
+        <CartesianGrid vertical={false} strokeDasharray="3 3" stroke={THEME.grid} />
+        <XAxis dataKey="name" tick={{ fill: THEME.text, fontSize: 11 }} axisLine={false} tickLine={false} />
+        <YAxis tick={{ fill: THEME.text, fontSize: 11 }} axisLine={false} tickLine={false} />
+        <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.02)' }} />
+        <Bar dataKey="value" radius={[4, 4, 0, 0]} barSize={40} />
+      </BarChart>
+    </ResponsiveContainer>
   )
 }
 
-/* ── 4. Time series ─────────────────────────────────────────────────────────── */
-export function AttemptsOverTimeChart({ data }) {
+function TimeActivityArea({ data }) {
   const items = data?.time_series || []
-  if (!items.length) return null
-  const formatted = items.map(d => ({ ...d, time: d.time.split(' ')[1] || d.time }))
+  if (!items.length) return <div style={{ height: 260, display: 'flex', alignItems: 'center', justifyContent: 'center', color: THEME.text, fontSize: 12 }}>No time-series data available</div>
+
+  const formatted = items.map(d => ({ ...d, timeDisplay: d.time.split(' ')[1] || d.time }))
   return (
-    <div className="chart-bg fade-up">
-      <div className="chart-title">Login Attempts Over Time (30-min buckets)</div>
-      <ResponsiveContainer width="100%" height={200}>
-        <AreaChart data={formatted} margin={{ right: 10 }}>
-          <defs>
-            <linearGradient id="failGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#ff2d6b" stopOpacity={0.2} />
-              <stop offset="95%" stopColor="#ff2d6b" stopOpacity={0} />
-            </linearGradient>
-            <linearGradient id="succGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#00f0c8" stopOpacity={0.12} />
-              <stop offset="95%" stopColor="#00f0c8" stopOpacity={0} />
-            </linearGradient>
-          </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke={DARK.grid} />
-          <XAxis dataKey="time" tick={{ fill: DARK.text, fontSize: 9 }} axisLine={false} tickLine={false} />
-          <YAxis tick={{ fill: DARK.text, fontSize: 10 }} axisLine={false} tickLine={false} />
-          <Tooltip content={<TT />} />
-          <Area type="monotone" dataKey="failures" name="Failed" stroke="#ff2d6b"
-            fill="url(#failGrad)" strokeWidth={2} dot={false} />
-          <Area type="monotone" dataKey="successes" name="Success" stroke="#00f0c8"
-            fill="url(#succGrad)" strokeWidth={2} dot={false} strokeDasharray="5 3" />
-          <Legend
-            iconType="line" iconSize={12}
-            formatter={v => <span style={{ color: DARK.text, fontSize: 10 }}>{v}</span>}
-          />
-        </AreaChart>
-      </ResponsiveContainer>
-    </div>
+    <ResponsiveContainer width="100%" height={300}>
+      <AreaChart data={formatted} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
+        <defs>
+          <linearGradient id="failGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="5%" stopColor={THEME.a2} stopOpacity={0.2} />
+            <stop offset="95%" stopColor={THEME.a2} stopOpacity={0} />
+          </linearGradient>
+          <linearGradient id="succGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="5%" stopColor={THEME.a1} stopOpacity={0.1} />
+            <stop offset="95%" stopColor={THEME.a1} stopOpacity={0} />
+          </linearGradient>
+        </defs>
+        <CartesianGrid strokeDasharray="3 3" stroke={THEME.grid} vertical={false} />
+        <XAxis dataKey="timeDisplay" tick={{ fill: THEME.text, fontSize: 10 }} axisLine={false} tickLine={false} dy={10} />
+        <YAxis tick={{ fill: THEME.text, fontSize: 10 }} axisLine={false} tickLine={false} />
+        <Tooltip content={<CustomTooltip />} />
+        <Area type="monotone" dataKey="failures" name="Failed Attempts" stroke={THEME.a2} fill="url(#failGrad)" strokeWidth={2} dot={false} />
+        <Area type="monotone" dataKey="successes" name="Successful Logins" stroke={THEME.a4} fill="url(#succGrad)" strokeWidth={2} dot={false} strokeDasharray="5 5" />
+        <Legend 
+            verticalAlign="top" iconType="rect" align="right"
+            formatter={(v) => <span style={{ color: THEME.text, fontSize: 10 }}>{v}</span>}
+        />
+      </AreaChart>
+    </ResponsiveContainer>
   )
 }
+
+/* ── Default Export Dispatcher ──────────────────────────────────────────────── */
+
+export default function Charts({ data, type }) {
+  if (type === 'pie') return <AttackDistributionPie data={data} />
+  if (type === 'bar') return <OutcomeBar data={data} />
+  if (type === 'area') return <TimeActivityArea data={data} />
+  return null
+}
+
+export { AttackDistributionPie, OutcomeBar, TimeActivityArea }
