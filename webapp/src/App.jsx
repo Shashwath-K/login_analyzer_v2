@@ -4,6 +4,7 @@ import DashboardPage from './pages/DashboardPage.jsx'
 import AnalysisPage from './pages/AnalysisPage.jsx'
 import ReportsPage from './pages/ReportsPage.jsx'
 import { useAnalysis } from './hooks/useAnalysis.js'
+import { ShieldCheck } from 'lucide-react'
 
 export default function App() {
   const [tab, setTab] = useState(0)
@@ -20,7 +21,7 @@ export default function App() {
     checkStatus()
   }, [checkStatus])
 
-  // Auto-switch to dashboard after data loads
+  // Auto-switch to Dashboard after data loads
   useEffect(() => {
     if (data && !loading) setTab(0)
   }, [data, loading])
@@ -64,9 +65,6 @@ export default function App() {
 
   return (
     <div className="app-layout">
-      {/* Scanline effect */}
-      <div className="scanline" />
-
       <Navbar
         tab={tab} setTab={setTab}
         modelReady={modelReady}
@@ -81,16 +79,23 @@ export default function App() {
       {/* Footer */}
       <footer style={{
         borderTop: '1px solid var(--border)',
-        padding: '10px 32px',
+        padding: '20px 32px',
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-        fontSize: 10, color: 'var(--mu)',
+        fontSize: 11, color: 'var(--mu)',
+        background: 'var(--header)'
       }}>
-        <span>🔐 Login Attack Pattern Analyzer · ML-Based Threat Detection</span>
-        <span>Python 3.10+ · scikit-learn · FastAPI · React 18 · Recharts</span>
+        <div className="flex items-center gap-2">
+           <ShieldCheck size={14} color="var(--a1)" />
+           <span>LogCentric · Enterprise Auth Threat Intelligence</span>
+        </div>
+        <span>Python 3.10+ · scikit-learn · FastAPI · React 18 · Lucide</span>
       </footer>
 
-      {/* Toast */}
-      <div className={`toast${toast.show ? ' show' : ''}`}>{toast.msg}</div>
+      {/* Toast Notification */}
+      <div className={`toast${toast.show ? ' show' : ''}`}>
+        <ShieldCheck size={16} color="var(--a4)" />
+        <span>{toast.msg}</span>
+      </div>
     </div>
   )
 }
