@@ -1,72 +1,55 @@
 import { useState } from 'react'
-
-const tabs = ['THREAT NARRATIVE', 'SOC REPORT', 'FIREWALL RULES', 'ALERT EMAILS']
+import { FileText, ShieldAlert, Terminal, MessageSquareOff, Copy, ClipboardCheck } from 'lucide-react'
 
 export default function ReportsPanel({ data }) {
-  const [tab, setTab] = useState(0)
+  const [activeTab, setActiveTab] = useState(0)
+  const [copied, setCopied] = useState(false)
 
-  const contents = [
-    data?.threat_narrative || '',
-    data?.soc_report || '',
-    data?.firewall_rules || '',
-    data?.alert_emails || '',
+  const tabs = [
+    { label: 'Threat Narrative', icon: <MessageSquareOff size={14} />, content: data?.threat_narrative },
+    { label: 'SOC Report', icon: <FileText size={14} />, content: data?.soc_report },
+    { label: 'Firewall Rules', icon: <Terminal size={14} />, content: data?.firewall_rules },
+    { label: 'Alert Emails', icon: <ShieldAlert size={14} />, content: data?.alert_emails }
   ]
 
-  const copy = () => {
-    navigator.clipboard.writeText(contents[tab])
-      .then(() => { /* success */ })
-      .catch(() => { /* fallback */ })
+  const handleCopy = () => {
+    navigator.clipboard.writeText(tabs[activeTab].content)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
   }
 
-  return (
-    <div className="card fade-up">
-      <div className="card-header">
-        <span>📋</span>
-        <span className="card-title" style={{ color: 'var(--a1)' }}>Reports & Actions</span>
-      </div>
-      <div className="card-body" style={{ padding: 0 }}>
-        {/* Tab bar */}
-        <div style={{
-          display: 'flex', gap: 0,
-          borderBottom: '1px solid var(--border)',
-          background: 'rgba(0,0,0,.2)',
-          overflowX: 'auto',
-        }}>
-          {tabs.map((t, i) => (
-            <button
-              key={t}
-              onClick={() => setTab(i)}
-              style={{
-                padding: '10px 18px',
-                background: 'transparent',
-                border: 'none',
-                borderBottom: i === tab ? '2px solid var(--a1)' : '2px solid transparent',
-                color: i === tab ? 'var(--a1)' : 'var(--mu)',
-                fontFamily: 'var(--font-ui)', fontWeight: 600,
-                fontSize: 11, letterSpacing: '.07em', cursor: 'pointer',
-                whiteSpace: 'nowrap', transition: '.15s',
-              }}
-            >
-              {t}
-            </button>
-          ))}
-          <div style={{ marginLeft: 'auto', padding: '6px 14px', display: 'flex', alignItems: 'center' }}>
-            <button className="btn btn-ghost" onClick={copy} style={{ fontSize: 11, padding: '4px 12px' }}>
-              📋 Copy
-            </button>
-          </div>
-        </div>
+  if (!data) return (
+    <div className="card-body text-center" style={{ padding: '40px 20px', color: 'var(--mu)' }}>
+       No analysis reports generated yet.
+    </div>
+  )
 
-        {/* Content */}
-        <div style={{ padding: 18 }}>
-          {!contents[tab] ? (
-            <div className="empty-state">
-              <div className="empty-icon">📄</div>
-              <div className="empty-text">Run an analysis to generate {tabs[tab].toLowerCase()}.</div>
+  return (
+    <div className="card">
+      <div className="card-header justify-between">
+        <div className="flex items-center gap-2">
+          <FileText size={16} color="var(--a1)" />
+          <span className="card-title">Security Intelligence Reports</span>
+        </div>
+        <button className="btn btn-ghost" onClick={handleCopy} style={{ fontSize: 11, padding: '4px 10px' }}>
+          {copied ? <ClipboardCheck size={14} color="var(--a4)" /> : <Copy size={14} />}
+          <span style={{ marginLeft: 6 }}>{copied ? 'Copied' : 'Copy Report'}</span>
+        </button>
+      </div>
+      <div className="card-body">
+        <div className="reports-tabs">
+          {tabs.map((t, idx) => (
+            <div 
+              key={t.label} 
+              className={`report-tab-btn${activeTab === idx ? ' active' : ''}`}
+              onClick={() => setActiveTab(idx)}
+            >
+              {t.label}
             </div>
-          ) : (
-            <div className="output-box">{contents[tab]}</div>
-          )}
+          ))}
+        </div>
+        <div className="output-box fade-up">
+          {tabs[activeTab].content || 'No content available for this report section.'}
         </div>
       </div>
     </div>
