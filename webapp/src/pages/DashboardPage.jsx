@@ -9,15 +9,15 @@ export default function DashboardPage({ data, loading }) {
         <div className="card" style={{ maxWidth: 460, padding: 40, background: 'var(--panel)' }}>
           <ShieldCheck size={64} color="var(--a1)" style={{ marginBottom: 24, opacity: 0.8 }} />
           <p style={{ color: 'var(--mu)', fontSize: 14, lineHeight: 1.6, marginBottom: 32 }}>
-            A professional pattern-driven authentication threat intelligence platform. 
+            A professional pattern-driven authentication threat intelligence platform.
             Upload your system logs to identify brute force, credential stuffing, and dictionary attack patterns with explainable analysis logic.
           </p>
           <div className="flex justify-center gap-4">
             <div style={{ padding: '12px 20px', border: '1px solid var(--border)', borderRadius: 'var(--radius)', fontSize: 13, background: 'rgba(255,255,255,0.02)' }}>
-               ML-Based Attack Classification
+              ML-Based Attack Classification
             </div>
             <div style={{ padding: '12px 20px', border: '1px solid var(--border)', borderRadius: 'var(--radius)', fontSize: 13, background: 'rgba(255,255,255,0.02)' }}>
-               Plain-English Reasonings
+              Plain-English Reasonings
             </div>
           </div>
         </div>
@@ -39,7 +39,7 @@ export default function DashboardPage({ data, loading }) {
       </div>
 
       <StatsRow data={data} />
-      
+
       <div className="grid-2">
         <div className="card">
           <div className="card-header">
@@ -63,8 +63,8 @@ export default function DashboardPage({ data, loading }) {
 
       <div className="card">
         <div className="card-header">
-           <Activity size={16} color="var(--a1)" />
-           <span className="card-title">Log Activity Intensity (Last 24h)</span>
+          <Activity size={16} color="var(--a1)" />
+          <span className="card-title">Log Activity Intensity</span>
         </div>
         <div className="card-body chart-bg" style={{ minHeight: 320 }}>
           <Charts data={data} type="area" />
