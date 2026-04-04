@@ -148,6 +148,45 @@ def login_logs_to_tuples(log_rows: list[dict]) -> list[tuple]:
 
 # ── Text / syslog parser ──────────────────────────────────────────────────────
 
+def parse_raw_login_log(text: str) -> list[dict]:
+    """Parse unstructured raw login logs into a list of dicts suitable for the ML pipeline.
+    
+    Expected format examples:
+    2026-04-02 10:00:00 - User: admin - IP: 192.168.1.100 - Status: failure - Password: pass - Device: Web - Location: US
+    """
+    rows = []
+    for line in text.splitlines():
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+
+        ts_match = re.search(r"(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})", line)
+        user_match = re.search(r"User:\s*([^\s-]+)", line, re.IGNORECASE)
+        ip_match = re.search(r"IP:\s*(\d{1,3}(?:\.\d{1,3}){3})", line, re.IGNORECASE)
+        status_match = re.search(r"Status:\s*(success|failure)", line, re.IGNORECASE)
+        paw_match = re.search(r"Password:\s*([^\s-]+)", line, re.IGNORECASE)
+        device_match = re.search(r"Device:\s*([^\s-]+)", line, re.IGNORECASE)
+        loc_match = re.search(r"Location:\s*([^\s-]+)", line, re.IGNORECASE)
+
+        timestamp = ts_match.group(1) if ts_match else now_str()
+        username = user_match.group(1) if user_match else "unknown"
+        ip_address = ip_match.group(1) if ip_match else "0.0.0.0"
+        status = status_match.group(1).lower() if status_match else "failure"
+        password_used = paw_match.group(1) if paw_match else ""
+        device = device_match.group(1) if device_match else "Unknown"
+        location = loc_match.group(1) if loc_match else "Unknown"
+
+        rows.append({
+            "timestamp": timestamp,
+            "username": username,
+            "ip_address": ip_address,
+            "status": status,
+            "password_used": password_used,
+            "device": device,
+            "location": location
+        })
+    return rows
+
 def parse_text_log(text: str) -> list[tuple]:
     """Parse a raw text-based log file into analysis pipeline tuples.
 
