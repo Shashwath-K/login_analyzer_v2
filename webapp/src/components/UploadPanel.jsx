@@ -12,7 +12,7 @@ export default function UploadPanel({ onFile, onSample, onSimulate, loading }) {
     { type: 'dictionary', label: 'Dictionary', icon: <Activity size={14} color="#8b5cf6" /> },
     { type: 'normal', label: 'Normal Traffic', icon: <Shield size={14} color="#22c55e" /> }
   ]
-
+  
   return (
     <div className="card">
       <div className="card-header">
@@ -22,9 +22,9 @@ export default function UploadPanel({ onFile, onSample, onSimulate, loading }) {
       <div className="card-body">
         {/* Dropzone mockup using standard input */}
         <label className={`dropzone${loading ? ' active' : ''}`} style={{ marginBottom: 20 }}>
-          <input type="file" onChange={handleFileChange} accept=".csv" disabled={loading} style={{ display: 'none' }} />
+          <input type="file" onChange={handleFileChange} accept=".csv,.raw,.txt,.log" disabled={loading} style={{ display: 'none' }} />
           <Upload className="dropzone-icon" size={32} />
-          <div className="dropzone-title">Click to upload login logs (CSV)</div>
+          <div className="dropzone-title">Click to upload login logs (CSV / RAW / TXT)</div>
           <div className="dropzone-sub">Files should contain: timestamp, ip_address, username, status and password_used.</div>
         </label>
 
