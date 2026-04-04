@@ -1,7 +1,7 @@
 <div align="center">
 
-<h1>🔐 Login Attack Pattern Analyzer</h1>
-<p><strong>ML-Based Authentication Threat Detection System</strong></p>
+<h1>🔐 LogCentric</h1>
+<p><strong>Intelligent Authentication Threat Detection System</strong></p>
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![scikit-learn](https://img.shields.io/badge/scikit--learn-RandomForest-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white)](https://scikit-learn.org)
@@ -48,7 +48,7 @@ Login Attack Pattern Analyzer
 │   ├── explain_attack.py          ← Generate plain-English reasoning
 │   └── recommendation_engine.py   ← Produce mitigation steps + reports
 │
-├── Web Dashboard (python_project.py) ← Rule-based NetSentinel web UI
+├── Web Dashboard (python_project.py) ← Rule-based LogCentric web UI
 │   └── 30+ regex rules → API → embedded HTML/JS SPA
 │
 └── Web Application (webapp/ + backend/) ← React + FastAPI modern UI
@@ -94,7 +94,7 @@ login_logs.csv
 | Visualization | `matplotlib` | 4-panel login attack charts |
 | Web Framework | `FastAPI` | REST API backend for React frontend |
 | ASGI Server | `uvicorn` | Production-grade Python ASGI server |
-| Web Server (legacy) | `http.server` | Built-in NetSentinel web dashboard |
+| Web Server (legacy) | `http.server` | Built-in LogCentric web dashboard |
 | Data Source | CSV files | login_logs.csv, training_data.csv |
 
 ### Frontend (Web Application)
@@ -141,7 +141,7 @@ Login_analyzer_tracer/
 │
 ├── 📂 analysis/
 │   ├── log_reader.py           # CSV + PCAP + text log parsing
-│   ├── pattern_detector.py     # 30+ regex rule engine (from NetSentinel)
+│   ├── pattern_detector.py     # 30+ regex rule engine (from LogCentric)
 │   └── feature_extractor.py   # log rows → feature vectors per source IP
 │
 ├── 📂 ml_model/
@@ -178,7 +178,7 @@ Login_analyzer_tracer/
 │   └── package.json
 │
 ├── main.py                     # CLI entry point — full ML analysis pipeline
-├── python_project.py           # NetSentinel web dashboard (rule-based, legacy)
+├── python_project.py           # LogCentric web dashboard (rule-based, legacy)
 └── README.md                   # This file
 ```
 
@@ -263,7 +263,7 @@ npm run dev
 # Opens at http://localhost:5173
 ```
 
-### 5. Run the Legacy NetSentinel Dashboard (Optional)
+### 5. Run the Legacy LogCentric Dashboard (Optional)
 
 ```bash
 python python_project.py
@@ -407,10 +407,10 @@ Charts are saved to `output/plots/` when using `--plots`:
 This project was developed as an academic cybersecurity analytics project demonstrating:
 - **Supervised learning** applied to authentication log analysis
 - **Separation of concerns** in Python modular architecture
-- **Explainable AI** — bridging ML predictions and human-readable reasoning
+- **Explainable Analysis** — bridging ML predictions and human-readable reasoning
 - **Full-stack cybersecurity tooling** — from raw log ingestion to actionable SOC reports
 
-The rule-based NetSentinel dashboard (`python_project.py`) preserves the original system that was refactored into this modular architecture, demonstrating a before/after comparison of software engineering quality.
+The rule-based LogCentric dashboard (`python_project.py`) preserves the original system that was refactored into this modular architecture, demonstrating a before/after comparison of software engineering quality.
 
 ---
 
