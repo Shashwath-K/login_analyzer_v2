@@ -12,7 +12,7 @@ This script runs the complete ML-based analysis pipeline on login_logs.csv:
     5. Generate mitigation recommendations
     6. Print the full report to console
     7. Generate visualisation charts (if matplotlib is available)
-    8. Optionally launch the web dashboard (python_project.py style server)
+    8. Optionally launch the web dashboard (LogCentric style server)
 
 Usage:
     python main.py                      # ML pipeline only
@@ -213,7 +213,7 @@ def step_visualize(log_rows: list[dict], explanations: list[dict], plots_dir: st
 
 
 def step_launch_web(port: int) -> None:
-    """Optional: Launch the NetSentinel web dashboard (original web server)."""
+    """Optional: Launch the LogCentric web dashboard (original web server)."""
     import subprocess
     server_path = os.path.join(PROJECT_ROOT, "python_project.py")
     if not os.path.exists(server_path):
