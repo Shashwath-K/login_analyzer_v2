@@ -39,7 +39,7 @@ except ImportError:
     raise ImportError("FastAPI is required. Run: pip install fastapi uvicorn python-multipart")
 
 # ── Import ML pipeline modules ─────────────────────────────────────────────────
-from analysis.log_reader import read_login_logs_csv, login_logs_to_tuples
+from analysis.log_reader import read_login_logs_csv, login_logs_to_tuples, parse_raw_login_log
 from analysis.pattern_detector import detect_patterns
 from analysis.feature_extractor import extract_features_from_logs
 from ml_model.attack_classifier import classify_batch, is_model_available
@@ -199,16 +199,26 @@ def analyze_sample():
 
 @app.post("/api/analyze")
 async def analyze_uploaded(file: UploadFile = File(...)):
-    """Upload a login log CSV file and run the full ML analysis pipeline."""
-    if not file.filename.endswith(".csv"):
-        raise HTTPException(status_code=400, detail="Only CSV files are accepted.")
+    """Upload a login log CSV or RAW file and run the full ML analysis pipeline."""
+    allowed_raw = (".raw", ".txt", ".log")
+    
+    is_csv = file.filename.endswith(".csv")
+    is_raw = any(file.filename.endswith(ext) for ext in allowed_raw)
+    
+    if not (is_csv or is_raw):
+        raise HTTPException(status_code=400, detail="Only CSV, RAW, TXT, or LOG files are accepted.")
     try:
         content = await file.read()
         text = content.decode("utf-8", errors="replace")
-        reader = csv.DictReader(io.StringIO(text))
-        log_rows = [row for row in reader]
+        
+        if is_csv:
+            reader = csv.DictReader(io.StringIO(text))
+            log_rows = [row for row in reader]
+        else:
+            log_rows = parse_raw_login_log(text)
+
         if not log_rows:
-            raise HTTPException(status_code=400, detail="CSV file is empty or has no data rows.")
+            raise HTTPException(status_code=400, detail="File is empty or has no valid structural data rows.")
         return _run_pipeline(log_rows)
     except HTTPException:
         raise
