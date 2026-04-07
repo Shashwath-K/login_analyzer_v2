@@ -1,6 +1,6 @@
 <div align="center">
 
-<h1>🔐 LogCentric</h1>
+<h1>LogCentric</h1>
 <p><strong>Intelligent Authentication Threat Detection System</strong></p>
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
@@ -12,7 +12,7 @@
 
 ---
 
-## 📌 Project Objectives
+## ![Objectives](https://img.shields.io/badge/-Project%20Objectives-blue?style=flat-square&logo=target)
 
 This project was built to address three core academic and industry objectives in cybersecurity analytics:
 
@@ -36,7 +36,7 @@ For every classified attack, the system generates:
 
 ---
 
-## 🏗 Architecture Overview
+## ![Architecture](https://img.shields.io/badge/-Architecture%20Overview-blue?style=flat-square&logo=gitkraken)
 
 ```
 Login Attack Pattern Analyzer
@@ -81,7 +81,7 @@ login_logs.csv
 
 ---
 
-## 🧱 Technology Stack
+## ![Tech Stack](https://img.shields.io/badge/-Technology%20Stack-blue?style=flat-square&logo=codeforces)
 
 ### Backend / ML Pipeline
 
@@ -130,7 +130,7 @@ login_logs.csv
 
 ---
 
-## 📁 Project Structure
+## ![Structure](https://img.shields.io/badge/-Project%20Structure-blue?style=flat-square&logo=files)
 
 ```
 Login_analyzer_tracer/
@@ -184,7 +184,7 @@ Login_analyzer_tracer/
 
 ---
 
-## 🚀 Quick Start
+## ![Quick Start](https://img.shields.io/badge/-Quick%20Start-green?style=flat-square&logo=rocket)
 
 ### Prerequisites
 
@@ -273,7 +273,7 @@ python python_project.py
 
 ---
 
-## 🔬 How It Works
+## ![Internal Logic](https://img.shields.io/badge/-How%20It%20Works-blue?style=flat-square&logo=testify)
 
 ### Step 1 — Log Ingestion
 `analysis/log_reader.py` reads `data/login_logs.csv` and validates required columns (`timestamp`, `username`, `ip_address`, `status`, `password_used`, `device`, `location`). Supports CSV, plain text, and binary PCAP formats.
@@ -300,7 +300,7 @@ python python_project.py
 
 ---
 
-## 🎯 Testing with Simulations
+## ![Testing](https://img.shields.io/badge/-Testing%20with%20Simulations-blue?style=flat-square&logo=testing-library)
 
 Generate synthetic attack data for testing:
 
@@ -323,7 +323,7 @@ python main.py --report --plots
 
 ---
 
-## 📊 Output Examples
+## ![Output](https://img.shields.io/badge/-Output%20Examples-blue?style=flat-square&logo=chart-dot)
 
 ### Console Output (`python main.py`)
 
@@ -360,7 +360,7 @@ Charts are saved to `output/plots/` when using `--plots`:
 
 ---
 
-## 🔧 Configuration Reference
+## ![Configuration](https://img.shields.io/badge/-Configuration-blue?style=flat-square&logo=settings)
 
 ### `main.py` CLI Flags
 
@@ -402,7 +402,7 @@ Charts are saved to `output/plots/` when using `--plots`:
 
 ---
 
-## 🤝 Academic Context
+## ![Context](https://img.shields.io/badge/-Academic%20Context-blue?style=flat-square&logo=bookstack)
 
 This project was developed as an academic cybersecurity analytics project demonstrating:
 - **Supervised learning** applied to authentication log analysis
@@ -414,6 +414,6 @@ The rule-based LogCentric dashboard (`python_project.py`) preserves the original
 
 ---
 
-## 📜 License
+## ![License](https://img.shields.io/badge/-License-blue?style=flat-square&logo=read-the-docs)
 
 This project is for academic purposes. All synthetic data is computer-generated and does not represent any real individuals or organizations.
